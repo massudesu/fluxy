@@ -8,9 +8,14 @@ module.exports = async function handler(req, res) {
   try {
     applySecurityHeaders(req, res);
 
-    const pathname = resolvePathname(req);
+    let pathname = resolvePathname(req);
     if (pathname === null) {
       return sendJson(res, 400, { error: 'invalid_request', message: 'Endereço inválido.' });
+    }
+
+    // Se o runtime da Vercel entregar sem o prefixo /api, garante o prefixo correto
+    if (!pathname.startsWith('/api') && pathname !== '/health') {
+      pathname = `/api${pathname.startsWith('/') ? '' : '/'}${pathname}`;
     }
 
     applyCors(req, res);

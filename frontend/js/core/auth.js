@@ -228,7 +228,8 @@ async function registerUser(payload) {
     return account;
   } catch (error) {
     if (isConnectionError(error)) throw connectionProblem();
-    throw new Error(error.data?.message || 'Não foi possível concluir o cadastro. Tente novamente.');
+    const serverMessage = error.data?.message || error.data?.error?.message || (typeof error.data?.error === 'string' ? error.data.error : '') || error.message;
+    throw new Error(serverMessage || 'Não foi possível concluir o cadastro. Tente novamente.');
   }
 }
 

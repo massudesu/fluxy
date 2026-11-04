@@ -131,7 +131,8 @@ window.FLUXY_API = {
 
     if (!response.ok) {
       if (response.status === 401 && !skipAuth && this.onSessionExpired) this.onSessionExpired();
-      throw apiError(`API_${response.status}`, data.message || `Erro ${response.status}`, data);
+      const extractedMessage = data?.message || data?.error?.message || (typeof data?.error === 'string' ? data.error : '') || `Erro ${response.status}`;
+      throw apiError(`API_${response.status}`, extractedMessage, data);
     }
     return data;
   }
