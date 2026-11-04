@@ -1,0 +1,23 @@
+{
+  "name": "fluxy-local-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fluxy - gestao financeira para pequenos negocios: frontend estatico e API Node.js com PostgreSQL (ha tambem uma API de estudo em C).",
+  "main": "backend/src/index.js",
+  "scripts": {
+    "start": "node backend/src/index.js",
+    "dev": "node backend/src/index.js",
+    "db:migrate": "node backend/database/migrate.js",
+    "db:seed": "node backend/database/migrate.js --seed",
+    "mail:test": "node backend/scripts/testar-email.js",
+    "test": "node tests/run.js",
+    "verify": "node tests/verify-local.js",
+    "check": "node tests/check-syntax.js"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}

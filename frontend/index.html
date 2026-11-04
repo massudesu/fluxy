@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fluxy | Gestão financeira</title>
+    <meta name="description" content="Fluxy: gestão financeira, estoque, clientes e agenda para pequenos negócios.">
+    <meta name="theme-color" content="#6657e8">
+    <!-- Modo local (aberto por file:// ou em hospedagem so de arquivos, sem servidor):
+         "demo" permite usar como demonstracao, com os dados so neste navegador;
+         "off" desativa o modo (recomendado em instalacoes comerciais: so o servidor abre o sistema). -->
+    <meta name="fluxy-local-mode" content="demo">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    >
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    >
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/estoque.css">
+    <link rel="stylesheet" href="css/calendario.css">
+    <link rel="stylesheet" href="css/perfil.css">
+    <link rel="stylesheet" href="css/login.css">
+  </head>
+  <body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <section id="auth" class="auth-shell">
+      <div class="auth-card">
+        <div class="brand">
+          <span class="brand-mark">
+            <i class="fa-solid fa-chart-line"></i>
+          </span>
+          <span>Fluxy</span>
+        </div>
+        <p class="muted">Gestão financeira feita para o crescimento do seu negócio.</p>
+        <form id="login-form">
+          <label>
+            E-mail
+            <input id="login-email" type="email" autocomplete="username" required>
+          </label>
+          <label>
+            Senha
+            <div class="password-field">
+              <input id="login-password" type="password" autocomplete="current-password" required>
+              <button type="button" class="icon-btn" data-toggle="#login-password" aria-label="Mostrar ou ocultar a senha">
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+          </label>
+          <label class="remember">
+            <input id="remember-login" type="checkbox">
+            <span>Manter conectado neste dispositivo</span>
+          </label>
+          <button class="btn primary full">Entrar no painel</button>
+          <button type="button" class="link-btn" data-auth="forgot">Esqueci minha senha</button>
+        </form>
+        <form id="register-form" class="hidden">
+          <label>
+            Nome completo
+            <input id="register-name" autocomplete="name" maxlength="120" required>
+          </label>
+          <label>
+            E-mail
+            <input id="register-email" type="email" autocomplete="email" maxlength="150" required>
+          </label>
+          <label>
+            Telefone
+            <input id="register-phone" type="tel" autocomplete="tel" maxlength="20">
+          </label>
+          <label>
+            CPF
+            <small>(opcional)</small>
+            <input id="register-cpf" inputmode="numeric" maxlength="14">
+          </label>
+          <label>
+            Senha
+            <input id="register-password" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+            <small class="field-hint">Mínimo de 8 caracteres, com letra maiúscula, minúscula e número.</small>
+          </label>
+          <label>
+            Confirmar senha
+            <input id="register-confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+          </label>
+          <button class="btn primary full">Criar conta</button>
+          <button type="button" class="link-btn" data-auth="login">Já tenho uma conta</button>
+        </form>
+        <form id="forgot-form" class="hidden" novalidate>
+          <h2>Recuperar acesso</h2>
+          <p class="muted" id="forgot-hint">Informe o e-mail da sua conta. Enviaremos um link para você criar uma nova senha.</p>
+          <p id="forgot-message" class="form-message hidden" role="status" aria-live="polite"></p>
+          <div id="forgot-step-email" class="auth-step">
+            <label>
+              E-mail
+              <input id="forgot-email" type="email" autocomplete="email" maxlength="150">
+            </label>
+            <button type="submit" class="btn primary full" id="forgot-send">Enviar link por e-mail</button>
+          </div>
+          <div id="forgot-step-sent" class="auth-step hidden">
+            <button type="button" class="btn secondary full" id="forgot-again">Usar outro e-mail ou enviar de novo</button>
+          </div>
+          <div id="forgot-step-reset" class="auth-step hidden">
+            <label>
+              Nova senha
+              <div class="password-field">
+                <input id="reset-password" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+                <button type="button" class="icon-btn" data-toggle="#reset-password" aria-label="Mostrar ou ocultar a nova senha">
+                  <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+              <small class="field-hint">Mínimo de 8 caracteres, com letra maiúscula, minúscula e número.</small>
+            </label>
+            <label>
+              Confirmar nova senha
+              <div class="password-field">
+                <input id="reset-confirm" type="password" autocomplete="new-password" minlength="8" maxlength="128">
+                <button type="button" class="icon-btn" data-toggle="#reset-confirm" aria-label="Mostrar ou ocultar a confirmação">
+                  <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                </button>
+              </div>
+            </label>
+            <button type="submit" class="btn primary full" id="forgot-save-password">Salvar nova senha</button>
+          </div>
+          <button type="button" class="link-btn" data-auth="login">Voltar ao login</button>
+        </form>
+        <div class="auth-switch">
+          Ainda não possui conta?
+          <button class="link-btn" data-auth="register">Cadastre-se</button>
+        </div>
+        <small class="muted auth-note hidden" id="auth-mode-note"></small>
+      </div>
+    </section>
+    <div id="app" class="app hidden">
+      <aside id="sidebar">
+        <div class="sidebar-head">
+          <div class="brand">
+            <span class="brand-mark">
+              <i class="fa-solid fa-chart-line"></i>
+            </span>
+            <span>Fluxy</span>
+          </div>
+          <button id="close-menu" class="icon-btn mobile-only" aria-label="Fechar menu">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="workspace">
+          <span class="avatar small" id="workspace-avatar">FX</span>
+          <div>
+            <strong id="workspace-name">Minha empresa</strong>
+            <small id="workspace-mode">Painel da empresa</small>
+          </div>
+        </div>
+        <nav id="nav">
+          <button data-section="dashboard" class="nav-item active">
+            <i class="fa-solid fa-table-cells-large"></i>
+            Visão geral
+          </button>
+          <button data-section="financeiro" data-module="financeiro" class="nav-item">
+            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+            Movimentações
+          </button>
+          <button data-section="contas" data-module="contas" class="nav-item">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            Contas a pagar/receber
+          </button>
+          <button data-section="estoque" data-module="estoque" class="nav-item">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            Estoque
+          </button>
+          <button data-section="fornecedores" data-module="fornecedores" class="nav-item">
+            <i class="fa-solid fa-truck-field"></i>
+            Fornecedores
+          </button>
+          <button data-section="clientes" data-module="clientes" class="nav-item">
+            <i class="fa-solid fa-users"></i>
+            Clientes
+          </button>
+          <button data-section="servicos" data-module="servicos" class="nav-item">
+            <i class="fa-solid fa-briefcase"></i>
+            Serviços
+          </button>
+          <button data-section="agenda" data-module="agenda" class="nav-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            Agenda de serviços
+          </button>
+          <button data-section="calendario" data-module="calendario" class="nav-item">
+            <i class="fa-solid fa-calendar-check"></i>
+            Calendário
+          </button>
+          <button data-section="relatorios" data-module="relatorios" class="nav-item">
+            <i class="fa-solid fa-chart-pie"></i>
+            Relatórios
+          </button>
+        </nav>
+        <div class="nav-bottom">
+          <button data-section="configuracoes" class="nav-item">
+            <i class="fa-solid fa-gear"></i>
+            Configurações
+          </button>
+          <button id="logout" class="nav-item danger">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            Sair
+          </button>
+        </div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <button id="menu-toggle" class="icon-btn mobile-only" aria-label="Abrir menu">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          </button>
+          <div>
+            <span class="eyebrow" id="page-eyebrow">PAINEL PRINCIPAL</span>
+            <h1 id="page-title">Visão geral</h1>
+          </div>
+          <div class="top-actions">
+            <button id="notifications" data-section="contas" class="icon-btn has-badge" aria-label="Contas pendentes">
+              <i class="fa-regular fa-bell" aria-hidden="true"></i>
+              <span id="notification-count">0</span>
+            </button>
+            <button data-section="configuracoes" class="icon-btn settings-link" aria-label="Configurações">
+              <i class="fa-solid fa-gear" aria-hidden="true"></i>
+            </button>
+            <button data-section="perfil" class="profile-chip" aria-label="Meu perfil">
+              <span class="avatar" id="user-avatar">FX</span>
+              <span>
+                <strong id="user-name">Usuário</strong>
+                <small id="user-role">Administrador</small>
+              </span>
+            </button>
+          </div>
+        </header>
+        <div class="content">
+          <div id="connection-banner" class="connection-banner hidden" role="alert">
+            <span>
+              <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+              Sem conexão com o servidor. Você está vendo a última cópia salva neste navegador e não é possível gravar alterações agora.
+            </span>
+            <button type="button" class="btn secondary" id="retry-connection">Tentar de novo</button>
+          </div>
+          <section id="dashboard" class="section">
+            <div class="section-heading">
+              <div>
+                <h2>
+                  <span id="greeting-period">Olá</span>,
+                  <span id="greeting-name">Usuário</span>!
+                </h2>
+                <p class="muted">Aqui está o resumo do seu negócio hoje.</p>
+              </div>
+              <div class="heading-actions">
+                <span class="period">
+                  <i class="fa-regular fa-calendar"></i>
+                  Este mês
+                </span>
+                <button class="btn primary" data-modal="transaction">
+                  <i class="fa-solid fa-plus"></i>
+                  Nova movimentação
+                </button>
+              </div>
+            </div>
+            <div class="kpi-grid">
+              <article class="kpi-card dark">
+                <div>
+                  <span>Saldo disponível</span>
+                  <strong id="kpi-balance">R$ 0,00</strong>
+                  <small class="positive" id="balance-trend-box">
+                    <i class="fa-solid fa-arrow-trend-up" id="balance-trend-icon"></i>
+                    <span id="balance-trend">Sem dados do mês anterior</span>
+                  </small>
+                </div>
+                <i class="fa-solid fa-wallet kpi-icon"></i>
+              </article>
+              <article class="kpi-card">
+                <div>
+                  <span>Entradas</span>
+                  <strong id="kpi-in">R$ 0,00</strong>
+                  <small class="positive">
+                    <i class="fa-solid fa-arrow-up"></i>
+                    Receitas do mês
+                  </small>
+                </div>
+                <i class="fa-solid fa-circle-arrow-down kpi-icon green"></i>
+              </article>
+              <article class="kpi-card">
+                <div>
+                  <span>Saídas</span>
+                  <strong id="kpi-out">R$ 0,00</strong>
+                  <small class="negative">
+                    <i class="fa-solid fa-arrow-down"></i>
+                    Despesas do mês
+                  </small>
+                </div>
+                <i class="fa-solid fa-circle-arrow-up kpi-icon red"></i>
+              </article>
+              <article class="kpi-card">
+                <div>
+                  <span>A receber</span>
+                  <strong id="kpi-receivable">R$ 0,00</strong>
+                  <small class="warning">
+                    <i class="fa-solid fa-clock"></i>
+                    Contas pendentes
+                  </small>
+                </div>
+                <i class="fa-solid fa-hourglass-half kpi-icon yellow"></i>
+              </article>
+            </div>
+            <div class="dashboard-grid">
+              <article class="panel chart-panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>Fluxo de caixa</h3>
+                    <p class="muted">Acompanhe suas entradas e saídas</p>
+                  </div>
+                  <select id="chart-period" aria-label="Período do gráfico">
+                    <option value="6m">Últimos 6 meses</option>
+                    <option value="year">Este ano</option>
+                  </select>
+                </div>
+                <div class="chart-wrap">
+                  <canvas id="cash-chart"></canvas>
+                </div>
+              </article>
+              <article class="panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>Próximos vencimentos</h3>
+                    <p class="muted">Não deixe nada passar</p>
+                  </div>
+                  <button class="text-btn" data-section="contas">Ver todos</button>
+                </div>
+                <div id="upcoming-list" class="list"></div>
+              </article>
+            </div>
+            <div class="dashboard-grid bottom">
+              <article class="panel">
+                <div class="panel-head">
+                  <h3>Atalhos rápidos</h3>
+                </div>
+                <div class="quick-actions">
+                  <button data-modal="transaction" data-type="entrada">
+                    <span class="quick green">
+                      <i class="fa-solid fa-arrow-down"></i>
+                    </span>
+                    <b>Registrar entrada</b>
+                    <small>Venda ou recebimento</small>
+                  </button>
+                  <button data-modal="transaction" data-type="saida">
+                    <span class="quick red">
+                      <i class="fa-solid fa-arrow-up"></i>
+                    </span>
+                    <b>Registrar saída</b>
+                    <small>Despesa ou pagamento</small>
+                  </button>
+                  <button data-modal="event">
+                    <span class="quick purple">
+                      <i class="fa-solid fa-calendar-plus"></i>
+                    </span>
+                    <b>Novo compromisso</b>
+                    <small>Organize sua agenda</small>
+                  </button>
+                  <button data-section="relatorios">
+                    <span class="quick yellow">
+                      <i class="fa-solid fa-chart-column"></i>
+                    </span>
+                    <b>Gerar relatório</b>
+                    <small>Visão do negócio</small>
+                  </button>
+                </div>
+              </article>
+              <article class="panel">
+                <div class="panel-head">
+                  <h3>Alertas inteligentes</h3>
+                  <span class="status-dot">Ao vivo</span>
+                </div>
+                <div id="insights" class="insights"></div>
+              </article>
+            </div>
+          </section>
+          <section id="financeiro" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Movimentações</h2>
+                <p class="muted">Controle completo das entradas e saídas.</p>
+              </div>
+              <button class="btn primary" data-modal="transaction">
+                <i class="fa-solid fa-plus"></i>
+                Nova movimentação
+              </button>
+            </div>
+            <div class="toolbar">
+              <input id="transaction-search" class="search" type="search" placeholder="Buscar movimentação..." aria-label="Buscar movimentação">
+              <select id="transaction-filter" aria-label="Filtrar por tipo">
+                <option value="all">Todas</option>
+                <option value="entrada">Entradas</option>
+                <option value="saida">Saídas</option>
+              </select>
+            </div>
+            <div class="panel table-panel">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="transactions-table"></tbody>
+              </table>
+              <button type="button" class="text-btn show-more hidden" id="transactions-more">Mostrar mais</button>
+            </div>
+          </section>
+          <section id="contas" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Contas a pagar e receber</h2>
+                <p class="muted">Acompanhe seus compromissos financeiros.</p>
+              </div>
+              <button class="btn primary" data-modal="account">
+                <i class="fa-solid fa-plus"></i>
+                Agendar conta
+              </button>
+            </div>
+            <div id="accounts-grid" class="cards-grid"></div>
+          </section>
+          <section id="fornecedores" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Fornecedores</h2>
+                <p class="muted">Organize parceiros e compras do seu negócio.</p>
+              </div>
+              <button class="btn primary" data-modal="supplier">
+                <i class="fa-solid fa-plus"></i>
+                Novo fornecedor
+              </button>
+            </div>
+            <div class="panel">
+              <p class="muted">Cadastre fornecedores e relacione-os aos produtos do estoque.</p>
+              <div id="suppliers-list" class="list"></div>
+            </div>
+          </section>
+          <section id="estoque" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Estoque</h2>
+                <p class="muted">Controle produtos, entradas, saídas e níveis mínimos.</p>
+              </div>
+              <button class="btn primary" data-modal="product">
+                <i class="fa-solid fa-plus"></i>
+                Novo produto
+              </button>
+            </div>
+            <div class="kpi-grid stock-kpis">
+              <article class="kpi-card">
+                <div>
+                  <span>Produtos cadastrados</span>
+                  <strong id="stock-total">0</strong>
+                  <small class="muted">Itens ativos</small>
+                </div>
+                <i class="fa-solid fa-boxes-stacked kpi-icon"></i>
+              </article>
+              <article class="kpi-card">
+                <div>
+                  <span>Estoque baixo</span>
+                  <strong id="stock-low">0</strong>
+                  <small class="warning">Requer atenção</small>
+                </div>
+                <i class="fa-solid fa-triangle-exclamation kpi-icon yellow"></i>
+              </article>
+            </div>
+            <div class="panel table-panel">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Categoria</th>
+                    <th>Quantidade</th>
+                    <th>Preço venda</th>
+                    <th>Fornecedor</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="products-table"></tbody>
+              </table>
+            </div>
+            <div class="panel table-panel stock-history">
+              <div class="panel-head">
+                <h3>Histórico de movimentações</h3>
+                <button class="btn secondary" data-modal="stock-move">Registrar entrada/saída</button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Produto</th>
+                    <th>Movimento</th>
+                    <th>Quantidade</th>
+                    <th>Observação</th>
+                  </tr>
+                </thead>
+                <tbody id="stock-history-table"></tbody>
+              </table>
+              <button type="button" class="text-btn show-more hidden" id="stock-history-more">Mostrar mais</button>
+            </div>
+          </section>
+          <section id="clientes" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Clientes</h2>
+                <p class="muted">Sua base de relacionamento em um só lugar.</p>
+              </div>
+              <button class="btn primary" data-modal="client">
+                <i class="fa-solid fa-plus"></i>
+                Novo cliente
+              </button>
+            </div>
+            <div class="panel table-panel">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Contato</th>
+                    <th>Cadastro</th>
+                    <th>Total movimentado</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="clients-table"></tbody>
+              </table>
+            </div>
+          </section>
+          <section id="servicos" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Serviços e comprovantes</h2>
+                <p class="muted">Registre trabalhos prestados e emita comprovantes.</p>
+              </div>
+              <button class="btn primary" data-modal="service">
+                <i class="fa-solid fa-plus"></i>
+                Registrar serviço
+              </button>
+            </div>
+            <div class="panel table-panel">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="services-table"></tbody>
+              </table>
+            </div>
+          </section>
+          <section id="agenda" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Agenda de serviços</h2>
+                <p class="muted">Organize seus atendimentos.</p>
+              </div>
+              <button class="btn primary" data-modal="event">
+                <i class="fa-solid fa-calendar-plus"></i>
+                Novo agendamento
+              </button>
+            </div>
+            <div id="agenda-list" class="agenda-list"></div>
+          </section>
+          <section id="calendario" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Calendário empresarial</h2>
+                <p class="muted">Sua operação, compromissos e finanças sincronizados.</p>
+              </div>
+              <button class="btn primary" data-modal="event">
+                <i class="fa-solid fa-plus"></i>
+                Novo evento
+              </button>
+            </div>
+            <div class="calendar-toolbar">
+              <button id="prev-month" class="icon-btn" aria-label="Período anterior">
+                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+              </button>
+              <select id="calendar-month" aria-label="Selecionar mês"></select>
+              <select id="calendar-year" aria-label="Selecionar ano"></select>
+              <button id="next-month" class="icon-btn" aria-label="Próximo período">
+                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+              </button>
+              <div class="view-switch">
+                <button class="active" data-view="month">Mês</button>
+                <button data-view="week">Semana</button>
+                <button data-view="day">Dia</button>
+                <button data-view="year">Ano</button>
+              </div>
+            </div>
+            <div class="calendar-layout">
+              <div class="panel calendar-panel">
+                <div class="weekdays">
+                  <span>Dom</span>
+                  <span>Seg</span>
+                  <span>Ter</span>
+                  <span>Qua</span>
+                  <span>Qui</span>
+                  <span>Sex</span>
+                  <span>Sáb</span>
+                </div>
+                <div id="calendar-grid" class="calendar-grid"></div>
+              </div>
+              <aside class="panel calendar-side">
+                <h3>Próximos eventos</h3>
+                <div id="calendar-events"></div>
+              </aside>
+            </div>
+          </section>
+          <section id="relatorios" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Relatórios financeiros</h2>
+                <p class="muted">Indicadores para decisões melhores.</p>
+              </div>
+              <button class="btn primary" id="export-report">
+                <i class="fa-solid fa-download"></i>
+                Exportar CSV
+              </button>
+            </div>
+            <div class="report-grid">
+              <article class="panel report-highlight">
+                <span>Resultado acumulado</span>
+                <strong id="report-result">R$ 0,00</strong>
+                <p>Entradas menos saídas no período.</p>
+              </article>
+              <article class="panel report-highlight">
+                <span>Ticket médio</span>
+                <strong id="report-ticket">R$ 0,00</strong>
+                <p>Média das movimentações de entrada.</p>
+              </article>
+            </div>
+            <div class="panel table-panel">
+              <div class="panel-head">
+                <h3>Resumo por categoria</h3>
+              </div>
+              <div id="category-report" class="category-list"></div>
+            </div>
+          </section>
+          <section id="configuracoes" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Configurações</h2>
+                <p class="muted">Personalize o Fluxy para a realidade do seu negócio.</p>
+              </div>
+              <button id="save-settings" class="btn primary">
+                <i class="fa-solid fa-check"></i>
+                Salvar alterações
+              </button>
+            </div>
+            <div class="settings-grid">
+              <div class="panel settings-nav">
+                <button class="active" data-settings-tab="modules">
+                  <i class="fa-solid fa-cubes"></i>
+                  Módulos do sistema
+                </button>
+                <button data-settings-tab="company">
+                  <i class="fa-solid fa-building"></i>
+                  Dados da empresa
+                </button>
+                <button data-settings-tab="notifications">
+                  <i class="fa-regular fa-bell"></i>
+                  Notificações
+                </button>
+              </div>
+              <div class="panel settings-body">
+                <div data-settings-content="modules">
+                  <h3>Módulos ativos</h3>
+                  <p class="muted">
+                    Desative o que não faz parte da sua operação. Clique em "Salvar alterações" para gravar.
+                  </p>
+                  <div id="module-toggles" class="toggle-list"></div>
+                </div>
+                <div data-settings-content="company" class="hidden">
+                  <h3>Dados da empresa</h3>
+                  <div class="form-grid">
+                    <label>
+                      Nome da empresa
+                      <input id="company-name" maxlength="150">
+                    </label>
+                    <label>
+                      CNPJ
+                      <input id="company-doc" maxlength="18">
+                    </label>
+                    <label>
+                      Telefone
+                      <input id="company-phone" maxlength="20">
+                    </label>
+                    <label>
+                      Fuso horário
+                      <select id="company-timezone">
+                        <option>America/Sao_Paulo</option>
+                        <option>America/Fortaleza</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+                <div data-settings-content="notifications" class="hidden">
+                  <h3>Preferências de alertas</h3>
+                  <div class="toggle-list">
+                    <label class="toggle-row">
+                      <span>
+                        <b>Contas a vencer</b>
+                        <small>Alertar compromissos financeiros próximos.</small>
+                      </span>
+                      <input type="checkbox" id="notify-accounts">
+                      <i></i>
+                    </label>
+                    <label class="toggle-row">
+                      <span>
+                        <b>Entregas e recebimentos</b>
+                        <small>Notificar eventos operacionais do calendário.</small>
+                      </span>
+                      <input type="checkbox" id="notify-events">
+                      <i></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="perfil" class="section hidden">
+            <div class="section-heading">
+              <div>
+                <h2>Meu perfil</h2>
+                <p class="muted">Gerencie seus dados, segurança e privacidade.</p>
+              </div>
+              <button id="save-profile" class="btn primary">
+                <i class="fa-solid fa-check"></i>
+                Salvar perfil
+              </button>
+            </div>
+            <div class="profile-layout">
+              <div class="panel profile-card">
+                <span class="avatar huge" id="profile-avatar">FX</span>
+                <h3 id="profile-name-card">Seu perfil</h3>
+                <p class="muted" id="profile-email-card"></p>
+              </div>
+              <div class="panel profile-body">
+                <div class="profile-tabs">
+                  <button class="active" data-profile-tab="personal">Dados pessoais</button>
+                  <button data-profile-tab="security">Segurança</button>
+                  <button data-profile-tab="account">Conta</button>
+                </div>
+                <div data-profile-content="personal">
+                  <div class="form-grid">
+                    <label>
+                      Nome completo
+                      <input id="profile-name" autocomplete="name" maxlength="120">
+                    </label>
+                    <label>
+                      E-mail
+                      <input id="profile-email" type="email" disabled>
+                      <small class="field-hint">O e-mail é o seu login e não pode ser alterado por aqui.</small>
+                    </label>
+                    <label>
+                      Telefone
+                      <input id="profile-phone" type="tel" autocomplete="tel" maxlength="20">
+                    </label>
+                    <label>
+                      Data de cadastro
+                      <input id="profile-created" disabled>
+                    </label>
+                  </div>
+                </div>
+                <div data-profile-content="security" class="hidden">
+                  <div class="security-item">
+                    <span class="security-icon">
+                      <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <div>
+                      <b>Alterar senha</b>
+                      <small>Atualize sua senha regularmente.</small>
+                    </div>
+                    <button class="btn secondary" data-modal="password">Alterar</button>
+                  </div>
+                  <div class="security-item">
+                    <span class="security-icon">
+                      <i class="fa-solid fa-shield-halved"></i>
+                    </span>
+                    <div>
+                      <b>Autenticação em duas etapas</b>
+                      <small>Ainda não disponível nesta versão.</small>
+                    </div>
+                    <span class="status-pill pending">Em breve</span>
+                  </div>
+                  <div class="security-item">
+                    <span class="security-icon">
+                      <i class="fa-solid fa-clock-rotate-left"></i>
+                    </span>
+                    <div>
+                      <b>Histórico de logins</b>
+                      <small id="login-history">Nenhum acesso registrado.</small>
+                    </div>
+                  </div>
+                </div>
+                <div data-profile-content="account" class="hidden">
+                  <div class="account-actions">
+                    <button id="export-data" class="btn secondary">
+                      <i class="fa-solid fa-file-export"></i>
+                      Exportar meus dados
+                    </button>
+                    <button id="backup-data" class="btn secondary">
+                      <i class="fa-solid fa-database"></i>
+                      Baixar backup da conta
+                    </button>
+                    <button id="end-sessions" class="btn secondary">
+                      <i class="fa-solid fa-laptop"></i>
+                      Encerrar sessões em outros dispositivos
+                    </button>
+                    <button id="delete-account" class="btn danger-btn">
+                      <i class="fa-solid fa-trash"></i>
+                      Excluir conta permanentemente
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <div id="modal" class="modal hidden">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-head">
+          <h3 id="modal-title"></h3>
+          <button type="button" class="icon-btn" id="close-modal" aria-label="Fechar">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <form id="modal-form"></form>
+      </div>
+    </div>
+    <script src="vendor/chart-4.5.1.umd.min.js" defer></script>
+    <script src="js/core/api.js" defer></script>
+    <script src="js/core/state.js" defer></script>
+    <script src="js/core/auth.js" defer></script>
+    <script src="js/core/sync.js" defer></script>
+    <script src="js/core/session.js" defer></script>
+    <script src="js/core/modal.js" defer></script>
+    <script src="js/modules/dashboard.js" defer></script>
+    <script src="js/modules/financeiro.js" defer></script>
+    <script src="js/modules/cadastros.js" defer></script>
+    <script src="js/modules/agenda-calendario.js" defer></script>
+    <script src="js/modules/relatorios-config.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>

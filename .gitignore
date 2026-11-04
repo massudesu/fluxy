@@ -1,0 +1,23 @@
+node_modules/
+
+# configuracao local com senhas
+.env
+.env.*
+!.env.example
+
+# logs
+backend/logs/*.log
+!backend/logs/.gitkeep
+npm-debug.log*
+
+# backend em C: executavel e dados gravados em disco (usuarios, hashes de senha)
+backend/c/fluxy-api
+backend/c/fluxy-api.exe
+backend/c/*.o
+backend/database/data/
+
+# sistema operacional / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

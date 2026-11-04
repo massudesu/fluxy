@@ -1,0 +1,9 @@
+.profile-card {
+  min-height: 260px;
+}
+
+.security-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

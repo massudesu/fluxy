@@ -1,0 +1,104 @@
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remember input {
+  width: auto;
+}
+
+.password-field {
+  position: relative;
+  display: block;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.password-field .icon-btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: 0;
+  background: transparent;
+  color: #7a8698;
+}
+
+.password-field .icon-btn:hover {
+  color: var(--purple);
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-strong-password-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
+.auth-step {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-note {
+  display: block;
+  text-align: center;
+}
+
+.category-list > .muted,
+#category-report > .muted,
+#suppliers-list > .muted,
+#upcoming-list > .muted,
+.list > .muted,
+.cards-grid > .muted {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 22px 10px;
+  margin: 0;
+  width: 100%;
+}
+
+.supplier-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 0;
+  border-bottom: 1px solid #f0f2f6;
+}
+
+.supplier-row:last-child {
+  border-bottom: 0;
+}
+
+.supplier-row > div {
+  flex: 1;
+  display: grid;
+  gap: 3px;
+}
+
+.supplier-row b {
+  font-size: 13px;
+}
+
+.supplier-row small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.auth-note.error {
+  color: #b3261e;
+  font-weight: 600;
+}
