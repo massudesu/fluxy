@@ -13,6 +13,13 @@ module.exports = async function handler(req, res) {
       return sendJson(res, 400, { error: 'invalid_request', message: 'Endereço inválido.' });
     }
 
+    if (pathname === '/api' || pathname === '/api/') {
+      const matched = req.headers['x-matched-path'] || req.headers['x-forwarded-uri'] || req.headers['x-original-url'];
+      if (matched && matched !== '/api' && matched !== '/api/') {
+        pathname = decodeURIComponent(new URL(matched, 'http://localhost').pathname);
+      }
+    }
+
     // Se o runtime da Vercel entregar sem o prefixo /api, garante o prefixo correto
     if (!pathname.startsWith('/api') && pathname !== '/health') {
       pathname = `/api${pathname.startsWith('/') ? '' : '/'}${pathname}`;

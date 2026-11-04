@@ -25,7 +25,8 @@ const CONTENT_SECURITY_POLICY = [
 
 function resolvePathname(req) {
   try {
-    return decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+    const rawPath = req.headers['x-matched-path'] || req.headers['x-forwarded-uri'] || req.headers['x-original-url'] || req.url;
+    return decodeURIComponent(new URL(rawPath, 'http://localhost').pathname);
   } catch (_error) {
     return null;
   }
