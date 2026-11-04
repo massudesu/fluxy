@@ -61,8 +61,9 @@ function buildDatabaseUrl() {
 const DATABASE_URL = buildDatabaseUrl();
 
 // Base do link de redefinicao de senha. Nunca vem do cabecalho Host, que o visitante controla.
-const APP_URL_IS_EXPLICIT = Boolean(process.env.APP_URL);
-const APP_URL = (process.env.APP_URL || `http://localhost:${PORT}`).replace(/\/+$/, '');
+const defaultAppUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${PORT}`;
+const APP_URL_IS_EXPLICIT = Boolean(process.env.APP_URL || process.env.VERCEL_URL);
+const APP_URL = (process.env.APP_URL || defaultAppUrl).replace(/\/+$/, '');
 
 const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
 const SMTP = {
@@ -79,7 +80,7 @@ const MAIL_MODE = String(process.env.MAIL_MODE || 'smtp').trim().toLowerCase();
 
 const CORS_ORIGINS = readList('CORS_ORIGINS');
 
-const TRUST_PROXY = readBoolean('TRUST_PROXY', false);
+const TRUST_PROXY = readBoolean('TRUST_PROXY', Boolean(process.env.VERCEL));
 
 const COOKIE_SECURE = readBoolean('COOKIE_SECURE', IS_PRODUCTION || /^https:/i.test(APP_URL));
 // Site em outro dominio (CORS_ORIGINS) so recebe o cookie com SameSite=None, que exige Secure.

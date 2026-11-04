@@ -14,7 +14,11 @@ types.setTypeParser(20, value => {
 types.setTypeParser(1082, value => value);
 
 // Sem limite, um banco inacessivel deixaria a requisicao parada ate o timeout do sistema operacional.
-const pool = new Pool({ connectionString: DATABASE_URL, connectionTimeoutMillis: 10000 });
+const poolConfig = { connectionString: DATABASE_URL, connectionTimeoutMillis: 10000 };
+if (DATABASE_URL && (DATABASE_URL.includes('sslmode=require') || DATABASE_URL.includes('neon.tech') || DATABASE_URL.includes('supabase.co'))) {
+  poolConfig.ssl = { rejectUnauthorized: false };
+}
+const pool = new Pool(poolConfig);
 
 pool.on('error', error => {
   console.error('[Fluxy] erro inesperado no pool do PostgreSQL:', error.message);

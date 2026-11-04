@@ -60,6 +60,24 @@ function sendError(res, error) {
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
+    if (req.body !== undefined && req.body !== null) {
+      if (typeof req.body === 'object') {
+        if (Array.isArray(req.body)) return reject(new HttpError(400, 'invalid_json', 'Os dados enviados estão em formato inválido.'));
+        return resolve(req.body);
+      }
+      if (typeof req.body === 'string') {
+        const raw = req.body.trim();
+        if (!raw) return resolve({});
+        try {
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('not an object');
+          return resolve(parsed);
+        } catch (_error) {
+          return reject(new HttpError(400, 'invalid_json', 'Os dados enviados estão em formato inválido.'));
+        }
+      }
+    }
+
     const chunks = [];
     let size = 0;
     let rejected = false;

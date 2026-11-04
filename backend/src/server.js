@@ -149,4 +149,11 @@ function shutdown() {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
-module.exports = { server, start };
+module.exports = {
+  server,
+  start,
+  resolvePathname,
+  applySecurityHeaders,
+  applyCors,
+  handleRequest
+};

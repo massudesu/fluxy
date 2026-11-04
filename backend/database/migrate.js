@@ -16,7 +16,11 @@ const HINTS = {
 };
 
 async function run() {
-  const pool = new Pool({ connectionString: DATABASE_URL });
+  const poolConfig = { connectionString: DATABASE_URL };
+  if (DATABASE_URL && (DATABASE_URL.includes('sslmode=require') || DATABASE_URL.includes('neon.tech') || DATABASE_URL.includes('supabase.co'))) {
+    poolConfig.ssl = { rejectUnauthorized: false };
+  }
+  const pool = new Pool(poolConfig);
   // So os avisos do proprio schema.sql (ex.: cadastros repetidos unidos); os "already exists,
   // skipping" do CREATE ... IF NOT EXISTS ficam de fora.
   pool.on('connect', client => client.on('notice', notice => {
