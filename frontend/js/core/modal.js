@@ -105,6 +105,19 @@ const MODAL_FORMS = {
     `
   }),
 
+  sale: () => ({
+    title: 'Nova venda',
+    submitLabel: 'Confirmar venda',
+    successMessage: 'Venda registrada e estoque atualizado.',
+    html: `
+      <label>Produto
+        <select name="productId" required>${productOptionsHtml()}</select>
+      </label>
+      <label>Quantidade vendida<input name="quantity" type="number" min="1" step="1" required></label>
+      <p class="muted">A quantidade será descontada do estoque automaticamente.</p>
+    `
+  }),
+
   'stock-move': () => ({
     title: 'Movimentação de estoque',
     html: `
@@ -340,6 +353,10 @@ async function deleteAccount(data) {
 function saveModalRecord(kind, data) {
   if (kind === 'password') return changePassword(data);
   if (kind === 'delete-account') return deleteAccount(data);
+  if (kind === 'sale') {
+    data = { ...data, movement: 'saida', note: 'Venda' };
+    return hasApi() ? saveOnServer('stock-move', data) : saveInBrowser('stock-move', data);
+  }
   return hasApi() ? saveOnServer(kind, data) : saveInBrowser(kind, data);
 }
 
@@ -348,7 +365,7 @@ let modalOpener = null;
 function openModal(kind, type) {
   const buildForm = MODAL_FORMS[kind];
   if (!buildForm) return;
-  if (kind === 'stock-move' && !state.products.length) {
+  if ((kind === 'stock-move' || kind === 'sale') && !state.products.length) {
     toast('Cadastre um produto antes de movimentar o estoque.', 'error');
     return;
   }
